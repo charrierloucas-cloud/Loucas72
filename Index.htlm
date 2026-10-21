@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PerfScope – Testez et estimez les performances de votre PC ou mobile</title>
+<meta name="description" content="Mesurez la puissance de votre ordinateur, téléphone ou tablette en 15 secondes : processeur, mémoire, graphismes et estimation par usage.">
+<script>try{var t=localStorage.getItem("ps-theme");document.documentElement.dataset.theme=t||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")}catch(e){document.documentElement.dataset.theme="light"}</script>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#14182b;--mu:#5d6480;--ac:#4f46e5;--ac2:#06b6d4;--bd:#e3e6f0;--sh:0 8px 30px rgba(20,24,43,.08)}
+[data-theme=dark]{--bg:#0d1020;--card:#161a30;--tx:#eef0fa;--mu:#9aa2c4;--bd:#262b4a;--sh:0 8px 30px rgba(0,0,0,.4)}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.6}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd)}
+.bar{display:flex;align-items:center;justify-content:space-between;height:62px}
+.logo{font-weight:800;font-size:1.25rem;background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+nav{display:flex;gap:6px;align-items:center}
+nav a{padding:8px 12px;border-radius:10px;color:var(--mu);font-weight:500}
+nav a:hover{background:var(--card);color:var(--tx)}
+.ib{background:var(--card);border:1px solid var(--bd);color:var(--tx);border-radius:10px;width:40px;height:40px;cursor:pointer;font-size:1.1rem}
+#burger{display:none}
+@media(max-width:760px){#burger{display:inline-block}nav{position:absolute;top:62px;left:0;right:0;flex-direction:column;align-items:stretch;background:var(--bg);border-bottom:1px solid var(--bd);padding:10px 20px;display:none}nav.open{display:flex}}
+.hero{padding:72px 0 48px;text-align:center}
+.hero h1{font-size:clamp(2rem,6vw,3.6rem);line-height:1.1;letter-spacing:-.03em;margin-bottom:16px}
+.hero h1 span{background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:620px;margin:0 auto 28px;color:var(--mu);font-size:1.1rem}
+.btn{display:inline-block;border:0;cursor:pointer;font:inherit;font-weight:700;color:#fff;background:linear-gradient(90deg,var(--ac),var(--ac2));padding:14px 30px;border-radius:14px;box-shadow:0 10px 24px rgba(79,70,229,.35);transition:transform .2s,opacity .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn:disabled{opacity:.6;cursor:wait;transform:none}
+.btn.sec{background:var(--card);color:var(--tx);border:1px solid var(--bd);box-shadow:none;padding:10px 18px}
+section{padding:48px 0}
+h2{font-size:1.7rem;margin-bottom:8px;letter-spacing:-.02em}
+.sub{color:var(--mu);margin-bottom:24px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:22px;box-shadow:var(--sh)}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.prog{height:8px;background:var(--bd);border-radius:99px;overflow:hidden;margin:14px 0 6px}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ac),var(--ac2));transition:width .4s}
+#status{color:var(--mu);font-size:.95rem;min-height:1.5em}
+.res{display:grid;gap:16px;grid-template-columns:260px 1fr;margin-top:20px}
+@media(max-width:760px){.res{grid-template-columns:1fr}}
+.ring{text-align:center}
+.ring svg{width:190px;height:190px;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:10;stroke-linecap:round}
+.ring .bg{stroke:var(--bd)}
+.ring .fg{stroke:url(#g);stroke-dasharray:339.3;stroke-dashoffset:339.3;transition:stroke-dashoffset 1.2s ease}
+.sc{margin-top:-128px;height:128px;display:flex;flex-direction:column;justify-content:center}
+.sc b{font-size:2.6rem;line-height:1}
+.sc small{color:var(--mu)}
+.tier{margin-top:18px;font-weight:700;color:var(--ac)}
+.m{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px dashed var(--bd)}
+.m:last-child{border:0}
+.m span{color:var(--mu)}
+.m em{font-style:normal;font-size:.8rem;color:var(--mu);display:block}
+.use{margin:12px 0}
+.use div:first-child{display:flex;justify-content:space-between;font-size:.95rem}
+.use .prog{margin:6px 0 0;height:6px}
+dl{display:grid;grid-template-columns:auto 1fr;gap:8px 18px}
+dt{color:var(--mu)}
+dd{font-weight:600;word-break:break-word;text-align:right}
+.h{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 0;border-bottom:1px solid var(--bd);font-size:.92rem}
+.acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+details{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 18px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:600}
+details p{color:var(--mu);margin-top:8px}
+footer{text-align:center;color:var(--mu);padding:32px 0;border-top:1px solid var(--bd);font-size:.9rem}
+.rv{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+<a href="#accueil" class="logo">PerfScope</a>
+<nav id="nav"><a href="#test">Test</a><a href="#appareil">Appareil</a><a href="#historique">Historique</a><a href="#faq">FAQ</a></nav>
+<div><button class="ib" id="theme" aria-label="Changer de thème">🌓</button> <button class="ib" id="burger" aria-label="Menu">☰</button></div>
+</div></header>
+
+<main>
+<div class="wrap hero" id="accueil">
+<h1>Quelle est la vraie <span>puissance</span> de votre appareil ?</h1>
+<p>Un test de 15 secondes, directement dans votre navigateur : processeur, mémoire et graphismes, avec une estimation de ce que votre appareil gère confortablement.</p>
+<a class="btn" href="#test">Commencer</a>
+</div>
+
+<section id="test"><div class="wrap rv">
+<h2>Lancer le test</h2>
+<p class="sub">Fermez les autres onglets pour un résultat plus fiable. Sur téléphone, branchez-le si possible.</p>
+<div class="card">
+<button class="btn" id="run">▶ Lancer le test de performance</button>
+<div class="prog"><i id="pb"></i></div>
+<div id="status">Prêt. Le test dure environ 15 secondes.</div>
+<div class="res" id="res" hidden>
+<div class="card ring">
+<svg viewBox="0 0 120 120"><defs><linearGradient id="g"><stop offset="0" stop-color="#4f46e5"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs><circle class="bg" cx="60" cy="60" r="54"/><circle class="fg" id="fg" cx="60" cy="60" r="54"/></svg>
+<div class="sc"><b id="score">0</b><small>points</small></div>
+<div class="tier" id="tier"></div>
+</div>
+<div class="card" id="det"></div>
+</div>
+<div class="card" id="usebox" style="margin-top:16px" hidden><h3 style="margin-bottom:6px">Estimation par usage</h3><div id="uses"></div></div>
+</div>
+</div></section>
+
+<section id="appareil"><div class="wrap rv">
+<h2>Votre appareil</h2>
+<p class="sub">Informations détectées par votre navigateur (certaines ne sont pas communiquées par tous les navigateurs).</p>
+<div class="card"><dl id="info"></dl></div>
+</div></section>
+
+<section id="historique"><div class="wrap rv">
+<h2>Historique</h2>
+<p class="sub">Vos 10 derniers tests, enregistrés uniquement sur cet appareil.</p>
+<div class="card"><div id="hist"></div>
+<div class="acts"><button class="btn sec" id="copy">Copier le dernier résultat</button><button class="btn sec" id="clear">Effacer l’historique</button></div></div>
+</div></section>
+
+<section id="faq"><div class="wrap rv">
+<h2>Questions fréquentes</h2><p class="sub">Ce qu’il faut savoir pour bien interpréter les scores.</p>
+<details><summary>Les scores sont-ils comparables à Geekbench ou 3DMark ?</summary><p>Non. Ce sont des indices propres à PerfScope, utiles pour comparer vos appareils entre eux et situer un appareil, pas pour des classements officiels.</p></details>
+<details><summary>Pourquoi mon résultat varie-t-il d’un test à l’autre ?</summary><p>Un navigateur partage les ressources avec le système : onglets ouverts, économie d’énergie, chaleur. Faites plusieurs tests et gardez la tendance.</p></details>
+<details><summary>Mes données sont-elles envoyées quelque part ?</summary><p>Non. Tout s’exécute dans votre navigateur et l’historique reste dans le stockage local de cet appareil.</p></details>
+<details><summary>Pourquoi la mémoire n’est-elle pas toujours indiquée ?</summary><p>Seuls certains navigateurs (Chrome, Edge) exposent la mémoire approximative, plafonnée à 8 Go par protection de la vie privée.</p></details>
+</div></section>
+</main>
+<footer>PerfScope · Les estimations sont indicatives · Aucune donnée collectée</footer>
+
+<script>
+const $=s=>document.querySelector(s),yd=()=>new Promise(r=>setTimeout(r,0));
+const KEY="ps-history";let last=null;
+const html=document.documentElement;
+$("#theme").onclick=()=>{const t=html.dataset.theme==="dark"?"light":"dark";html.dataset.theme=t;try{localStorage.setItem("ps-theme",t)}catch(e){}};
+$("#burger").onclick=()=>$("#nav").classList.toggle("open");
+document.querySelectorAll("nav a").forEach(a=>a.onclick=()=>$("#nav").classList.remove("open"));
+const io=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add("in");io.unobserve(x.target)}}),{threshold:.1});
+document.querySelectorAll(".rv").forEach(e=>io.observe(e));
+
+/* ---------- Informations appareil ---------- */
+function gpuName(){try{const c=document.createElement("canvas"),g=c.getContext("webgl")||c.getContext("experimental-webgl");if(!g)return"Non disponible";const x=g.getExtension("WEBGL_debug_renderer_info");return x?g.getParameter(x.UNMASKED_RENDERER_WEBGL):g.getParameter(g.RENDERER)}catch(e){return"Non disponible"}}
+const ua=navigator.userAgent,mobile=/Mobi|Android|iPhone|iPad|Tablet/i.test(ua)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.platform));
+function browser(){return/Edg\//.test(ua)?"Edge":/OPR\//.test(ua)?"Opera":/Firefox\//.test(ua)?"Firefox":/Chrome\//.test(ua)?"Chrome":/Safari\//.test(ua)?"Safari":"Inconnu"}
+const GPU=gpuName();
+function showInfo(bat){
+  const n=navigator,c=n.connection;
+  const rows=[["Type",mobile?"Mobile / tablette":"Ordinateur"],["Système",(n.userAgentData&&n.userAgentData.platform)||n.platform||"Inconnu"],["Navigateur",browser()],
+  ["Cœurs logiques",n.hardwareConcurrency||"Non communiqué"],["Mémoire (approx.)",n.deviceMemory?"≈ "+n.deviceMemory+" Go":"Non communiquée"],
+  ["Processeur graphique",GPU],["Écran",screen.width+" × "+screen.height+" px (×"+(window.devicePixelRatio||1)+")"],
+  ["Connexion",c&&c.effectiveType?c.effectiveType.toUpperCase():"Non communiquée"],["Batterie",bat||"Non communiquée"],["Langue",n.language]];
+  $("#info").innerHTML=rows.map(r=>"<dt>"+r[0]+"</dt><dd></dd>").join("");
+  document.querySelectorAll("#info dd").forEach((d,i)=>d.textContent=rows[i][1]);
+}
+showInfo();
+if(navigator.getBattery)navigator.getBattery().then(b=>showInfo(Math.round(b.level*100)+" %"+(b.charging?" (en charge)":""))).catch(()=>{});
+
+/* ---------- Tests ---------- */
+const LOOP="for(let i=0;i<200000;i++){x=Math.sqrt(x*1.000001+i%7)+Math.sin(x)*0.0001}";
+async function cpuSingle(d){let it=0,x=.5;const t0=performance.now();while(performance.now()-t0<d){for(let i=0;i<200000;i++){x=Math.sqrt(x*1.000001+i%7)+Math.sin(x)*0.0001}it+=200000;await yd()}window.__x=x;return it/((performance.now()-t0)/1000)}
+async function cpuMulti(d){
+  const n=Math.min(navigator.hardwareConcurrency||4,16);
+  const src="onmessage=e=>{let it=0,x=.5;const t0=performance.now();while(performance.now()-t0<e.data){"+LOOP+";it+=200000}postMessage({it:it,t:performance.now()-t0})}";
+  const url=URL.createObjectURL(new Blob([src],{type:"text/javascript"}));
+  try{
+    const jobs=[];for(let i=0;i<n;i++)jobs.push(new Promise((ok,ko)=>{const w=new Worker(url);w.onmessage=e=>{w.terminate();ok(e.data.it/e.data.t*1000)};w.onerror=ko;w.postMessage(d)}));
+    return (await Promise.all(jobs)).reduce((a,b)=>a+b,0);
+  }finally{URL.revokeObjectURL(url)}
+}
+async function memTest(d){
+  const N=4*1024*1024,a=new Float64Array(N);let bytes=0,s=0;const t0=performance.now();
+  while(performance.now()-t0<d){for(let i=0;i<N;i++)a[i]=i*.5;for(let i=0;i<N;i++)s+=a[i];bytes+=N*16;await yd()}
+  window.__s=s;return bytes/1048576/((performance.now()-t0)/1000);
+}
+async function gfxTest(d){
+  const c=document.createElement("canvas");c.width=640;c.height=400;const x=c.getContext("2d");let n=0;const t0=performance.now();
+  while(performance.now()-t0<d){for(let i=0;i<300;i++){const g=x.createRadialGradient(0,0,0,0,0,30);g.addColorStop(0,"hsl("+(n+i)%360+",90%,60%)");g.addColorStop(1,"rgba(0,0,0,0)");x.save();x.translate(Math.random()*640,Math.random()*400);x.fillStyle=g;x.beginPath();x.arc(0,0,30,0,6.283);x.fill();x.restore()}n+=300;await yd()}
+  return n/((performance.now()-t0)/1000);
+}
+const pts=(v,ref)=>Math.round(Math.min(2000,v/ref*500));
+
+/* ---------- Orchestration ---------- */
+function step(i,txt){$("#pb").style.width=(i/5*100)+"%";$("#status").textContent=txt}
+$("#run").onclick=async()=>{
+  const b=$("#run");b.disabled=true;$("#res").hidden=true;$("#usebox").hidden=true;
+  try{
+    step(0,"1/4 – Processeur (1 cœur)…");const a=await cpuSingle(1800);
+    step(1,"2/4 – Processeur (tous les cœurs)…");let m;try{m=await cpuMulti(1800)}catch(e){m=a}
+    step(2,"3/4 – Mémoire…");let me;try{me=await memTest(1500)}catch(e){me=0}
+    step(3,"4/4 – Graphismes…");const g=await gfxTest(2200);
+    step(5,"Test terminé ✔");
+    const r={cpu1:pts(a,30e6),cpuN:pts(m,120e6),mem:pts(me,3000),gfx:pts(g,60000)};
+    r.score=Math.round(r.cpu1*.3+r.cpuN*.3+r.mem*.15+r.gfx*.25);
+    r.tier=r.score<250?"Basique":r.score<500?"Correct":r.score<800?"Performant":"Excellent";
+    r.raw={a,m,me,g};r.device=(mobile?"Mobile · ":"PC · ")+browser();r.date=new Date().toLocaleString("fr-FR");
+    show(r);save(r);
+  }catch(e){$("#status").textContent="Une erreur est survenue : "+e.message}
+  b.disabled=false;
+};
+function show(r){
+  last=r;$("#res").hidden=false;$("#usebox").hidden=false;
+  const f=n=>Math.round(n).toLocaleString("fr-FR");
+  const rows=[["Processeur – 1 cœur",r.cpu1,f(r.raw.a/1e6)+" M opérations/s"],["Processeur – multicœur",r.cpuN,f(r.raw.m/1e6)+" M opérations/s"],["Mémoire",r.mem,f(r.raw.me)+" Mo/s"],["Graphismes 2D",r.gfx,f(r.raw.g)+" formes/s"]];
+  $("#det").innerHTML=rows.map(x=>'<div class="m"><div>'+x[0]+'<em>'+x[2]+'</em></div><b>'+x[1]+'</b></div>').join("");
+  $("#tier").textContent="Niveau : "+r.tier;
+  const fg=$("#fg");fg.style.strokeDashoffset=339.3*(1-Math.min(1,r.score/1200));
+  const el=$("#score"),t0=performance.now();(function tick(t){const p=Math.min(1,(t-t0)/1200);el.textContent=Math.round(r.score*p);if(p<1)requestAnimationFrame(tick)})(t0);
+  const uses=[["Navigation web et réseaux sociaux",r.score,100],["Bureautique et visioconférence",r.score,180],["Vidéo HD / 4K",Math.min(r.score,r.gfx*1.5),250],["Multitâche et création de contenu",(r.cpuN+r.mem)/2,450],["Jeux légers et indépendants",Math.min(r.gfx,r.cpuN),350],["Jeux 3D exigeants",Math.min(r.gfx,r.cpuN),800]];
+  $("#uses").innerHTML=uses.map(u=>{const q=u[1]/u[2],l=q>=1.3?"Très fluide":q>=1?"Fluide":q>=.7?"Limité":"Déconseillé";return'<div class="use"><div><span>'+u[0]+'</span><b>'+l+'</b></div><div class="prog"><i style="width:'+Math.min(100,q*70)+'%"></i></div></div>'}).join("");
+  $("#res").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+/* ---------- Historique ---------- */
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return[]}}
+function save(r){try{const h=load();h.unshift({date:r.date,device:r.device,score:r.score,tier:r.tier,cpu1:r.cpu1,cpuN:r.cpuN,mem:r.mem,gfx:r.gfx});localStorage.setItem(KEY,JSON.stringify(h.slice(0,10)))}catch(e){}renderHist()}
+function renderHist(){const h=load(),box=$("#hist");box.innerHTML="";
+  if(!h.length){box.textContent="Aucun test enregistré pour l’instant.";return}
+  h.forEach(x=>{const d=document.createElement("div");d.className="h";const a=document.createElement("span"),b=document.createElement("b");a.textContent=x.date+" · "+x.device;b.textContent=x.score+" pts · "+x.tier;d.append(a,b);box.append(d)})}
+$("#clear").onclick=()=>{try{localStorage.removeItem(KEY)}catch(e){}renderHist()};
+$("#copy").onclick=()=>{
+  if(!last){alert("Lancez d’abord un test.");return}
+  const t="PerfScope – "+last.device+" – Score "+last.score+" ("+last.tier+") | CPU 1c: "+last.cpu1+" | CPU multi: "+last.cpuN+" | Mémoire: "+last.mem+" | Graphismes: "+last.gfx;
+  (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>alert("Résultat copié ✔")).catch(()=>prompt("Copiez ce texte :",t));
+};
+renderHist();
+</script>
+</body>
+</html>
